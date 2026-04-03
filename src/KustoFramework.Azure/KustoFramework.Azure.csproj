@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>KustoFramework.Azure</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Cédric Tallichet</Authors>
+    <Copyright>© 2026 Cédric Tallichet</Copyright>
+    <Description>Azure Data Explorer execution provider for KustoFramework. Execute strongly-typed KQL queries built with KustoFramework against ADX clusters using Microsoft.Azure.Kusto.Data.</Description>
+    <PackageTags>kusto;kql;azure-data-explorer;adx;query-builder;linq;execution</PackageTags>
+    <PackageProjectUrl>https://github.com/tallichet/KustoFramework</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tallichet/KustoFramework</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="KustoFramework.Azure.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KustoFramework\KustoFramework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.Kusto.Data" Version="14.*" />
+  </ItemGroup>
+
+</Project>

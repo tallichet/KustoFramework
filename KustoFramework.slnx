@@ -1,8 +1,10 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/KustoFramework/KustoFramework.csproj" />
+    <Project Path="src/KustoFramework.Azure/KustoFramework.Azure.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/KustoFramework.Tests/KustoFramework.Tests.csproj" />
+    <Project Path="tests/KustoFramework.Azure.Tests/KustoFramework.Azure.Tests.csproj" />
   </Folder>
 </Solution>
