@@ -1,6 +1,6 @@
 # KustoFramework
 
-[![Build](https://github.com/YOUR_USERNAME/KustoFramework/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/KustoFramework/actions/workflows/ci.yml)
+[![Build](https://github.com/tallichet/KustoFramework/actions/workflows/ci.yml/badge.svg)](https://github.com/tallichet/KustoFramework/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/KustoFramework.svg)](https://www.nuget.org/packages/KustoFramework)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
