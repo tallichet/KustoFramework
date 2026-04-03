@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/KustoFramework/KustoFramework.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/KustoFramework.Tests/KustoFramework.Tests.csproj" />
+  </Folder>
+</Solution>
