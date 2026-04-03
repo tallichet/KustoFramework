@@ -6,4 +6,25 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageId>KustoFramework</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Cédric Tallichet</Authors>
+    <Copyright>© 2026 Cédric Tallichet</Copyright>
+    <Description>A strongly-typed, LINQ-inspired query builder for Kusto Query Language (KQL), targeting .NET 10. Build KQL queries using C# expressions with full IntelliSense and compile-time safety.</Description>
+    <PackageTags>kusto;kql;azure-data-explorer;adx;query-builder;linq</PackageTags>
+    <PackageProjectUrl>https://github.com/tallichet/KustoFramework</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tallichet/KustoFramework</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+
 </Project>
