@@ -287,10 +287,15 @@ public class KqlExpressionVisitor
             "Max" => $"max({Visit(methodCall.Arguments[0])})",
             "DCount" => $"dcount({Visit(methodCall.Arguments[0])})",
             "Percentile" => $"percentile({Visit(methodCall.Arguments[0])}, {Visit(methodCall.Arguments[1])})",
-            "MakeList" => $"make_list({Visit(methodCall.Arguments[0])})",
-            "MakeSet" => $"make_set({Visit(methodCall.Arguments[0])})",
+            "MakeList" => TranslateMakeListOrSet("make_list", methodCall),
+            "MakeSet" => TranslateMakeListOrSet("make_set", methodCall),
+            "MakeBag" => $"make_bag({Visit(methodCall.Arguments[0])})",
             "ArgMax" => $"arg_max({Visit(methodCall.Arguments[0])}, {Visit(methodCall.Arguments[1])})",
             "ArgMin" => $"arg_min({Visit(methodCall.Arguments[0])}, {Visit(methodCall.Arguments[1])})",
+            "TakeAny" => $"take_any({Visit(methodCall.Arguments[0])})",
+            "Stdev" => $"stdev({Visit(methodCall.Arguments[0])})",
+            "Variance" => $"variance({Visit(methodCall.Arguments[0])})",
+            "Percentiles" => TranslatePercentiles(methodCall),
             "Ago" => TranslateAgo(methodCall),
             "Now" => "now()",
             "Bin" => $"bin({Visit(methodCall.Arguments[0])}, {TranslateTimeSpan(EvaluateExpression(methodCall.Arguments[1]))})",
@@ -298,6 +303,14 @@ public class KqlExpressionVisitor
             "StartOfMonth" => $"startofmonth({Visit(methodCall.Arguments[0])})",
             "StartOfWeek" => $"startofweek({Visit(methodCall.Arguments[0])})",
             "StartOfYear" => $"startofyear({Visit(methodCall.Arguments[0])})",
+            "EndOfDay" => $"endofday({Visit(methodCall.Arguments[0])})",
+            "EndOfMonth" => $"endofmonth({Visit(methodCall.Arguments[0])})",
+            "EndOfWeek" => $"endofweek({Visit(methodCall.Arguments[0])})",
+            "EndOfYear" => $"endofyear({Visit(methodCall.Arguments[0])})",
+            "DatetimeDiff" => $"datetime_diff({Visit(methodCall.Arguments[0])}, {Visit(methodCall.Arguments[1])}, {Visit(methodCall.Arguments[2])})",
+            "DatetimeAdd" => $"datetime_add({Visit(methodCall.Arguments[0])}, {Visit(methodCall.Arguments[1])}, {Visit(methodCall.Arguments[2])})",
+            "DayOfWeek" => $"dayofweek({Visit(methodCall.Arguments[0])})",
+            "FormatDatetime" => $"format_datetime({Visit(methodCall.Arguments[0])}, {Visit(methodCall.Arguments[1])})",
             "Between" => TranslateBetween(methodCall),
             "IsEmpty" => $"isempty({Visit(methodCall.Arguments[0])})",
             "IsNotEmpty" => $"isnotempty({Visit(methodCall.Arguments[0])})",
@@ -314,6 +327,15 @@ public class KqlExpressionVisitor
             "ToUpper" => $"toupper({Visit(methodCall.Arguments[0])})",
             "ToLower" => $"tolower({Visit(methodCall.Arguments[0])})",
             "Strcat" => $"strcat({string.Join(", ", methodCall.Arguments.Select(a => Visit(a)))})",
+            "Extract" => $"extract({Visit(methodCall.Arguments[0])}, {Visit(methodCall.Arguments[1])}, {Visit(methodCall.Arguments[2])})",
+            "Split" => $"split({Visit(methodCall.Arguments[0])}, {Visit(methodCall.Arguments[1])})",
+            "ReplaceString" => $"replace_string({Visit(methodCall.Arguments[0])}, {Visit(methodCall.Arguments[1])}, {Visit(methodCall.Arguments[2])})",
+            "ReplaceRegex" => $"replace_regex({Visit(methodCall.Arguments[0])}, {Visit(methodCall.Arguments[1])}, {Visit(methodCall.Arguments[2])})",
+            "IndexOf" => $"indexof({Visit(methodCall.Arguments[0])}, {Visit(methodCall.Arguments[1])})",
+            "ParseJson" => $"parse_json({Visit(methodCall.Arguments[0])})",
+            "ArrayLength" => $"array_length({Visit(methodCall.Arguments[0])})",
+            "Pack" => $"pack({string.Join(", ", methodCall.Arguments.Select(a => Visit(a)))})",
+            "BagKeys" => $"bag_keys({Visit(methodCall.Arguments[0])})",
             "Iff" => $"iff({Visit(methodCall.Arguments[0])}, {Visit(methodCall.Arguments[1])}, {Visit(methodCall.Arguments[2])})",
             "Coalesce" => $"coalesce({string.Join(", ", methodCall.Arguments.Select(a => Visit(a)))})",
             _ => throw new NotSupportedException($"Kql function '{name}' is not supported.")
@@ -344,6 +366,24 @@ public class KqlExpressionVisitor
         return $"substring({Visit(methodCall.Arguments[0])}, {Visit(methodCall.Arguments[1])})";
     }
 
+    private string TranslatePercentiles(MethodCallExpression methodCall)
+    {
+        var col = Visit(methodCall.Arguments[0]);
+        var percentilesValue = EvaluateExpression(methodCall.Arguments[1]);
+        if (percentilesValue is double[] pcts)
+            return $"percentiles({col}, {string.Join(", ", pcts.Select(p => p.ToString(System.Globalization.CultureInfo.InvariantCulture)))})";
+
+        return $"percentiles({col}, {Visit(methodCall.Arguments[1])})";
+    }
+
+    private string TranslateMakeListOrSet(string funcName, MethodCallExpression methodCall)
+    {
+        var col = Visit(methodCall.Arguments[0]);
+        if (methodCall.Arguments.Count == 2)
+            return $"{funcName}({col}, {Visit(methodCall.Arguments[1])})";
+        return $"{funcName}({col})";
+    }
+
     private string TranslateKqlStringExtension(MethodCallExpression methodCall)
     {
         var name = methodCall.Method.Name;
@@ -366,6 +406,12 @@ public class KqlExpressionVisitor
             "KqlMatchesRegex" => $"{source} matches regex {Visit(methodCall.Arguments[1])}",
             "KqlIn" => TranslateIn(source, methodCall.Arguments[1]),
             "KqlNotIn" => TranslateNotIn(source, methodCall.Arguments[1]),
+            "KqlNotHas" => $"{source} !has {Visit(methodCall.Arguments[1])}",
+            "KqlNotContains" => $"{source} !contains {Visit(methodCall.Arguments[1])}",
+            "KqlNotStartsWith" => $"{source} !startswith {Visit(methodCall.Arguments[1])}",
+            "KqlNotEndsWith" => $"{source} !endswith {Visit(methodCall.Arguments[1])}",
+            "KqlHasAny" => TranslateHasAnyAll("has_any", source, methodCall.Arguments[1]),
+            "KqlHasAll" => TranslateHasAnyAll("has_all", source, methodCall.Arguments[1]),
             _ => throw new NotSupportedException($"KQL string extension '{name}' is not supported.")
         };
     }
@@ -386,6 +432,15 @@ public class KqlExpressionVisitor
             return $"{source} !in ({string.Join(", ", arr.Select(v => $"\"{v}\""))})";
 
         return $"{source} !in ({Visit(valuesExpression)})";
+    }
+
+    private string TranslateHasAnyAll(string funcName, string source, Expression valuesExpression)
+    {
+        var values = EvaluateExpression(valuesExpression);
+        if (values is string[] arr)
+            return $"{source} {funcName} ({string.Join(", ", arr.Select(v => $"\"{v}\""))})";
+
+        return $"{source} {funcName} ({Visit(valuesExpression)})";
     }
 
     private string TranslateStringMethod(MethodCallExpression methodCall)

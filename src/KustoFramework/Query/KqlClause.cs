@@ -171,3 +171,21 @@ public sealed record RenderClause(RenderKind Kind) : KqlClause
         return $"| render {kind}";
     }
 }
+
+public sealed record MvApplyClause(LambdaExpression ArrayColumn, string InnerKql) : KqlClause
+{
+    public override string ToKql(KqlExpressionVisitor visitor) =>
+        $"| mv-apply {visitor.TranslateMemberAccess(ArrayColumn)} on ({InnerKql})";
+}
+
+public sealed record ScanClause(string ScanBody) : KqlClause
+{
+    public override string ToKql(KqlExpressionVisitor visitor) =>
+        $"| scan {ScanBody}";
+}
+
+public sealed record PartitionByClause(LambdaExpression Column, string InnerKql) : KqlClause
+{
+    public override string ToKql(KqlExpressionVisitor visitor) =>
+        $"| partition by {visitor.TranslateMemberAccess(Column)} ({InnerKql})";
+}
