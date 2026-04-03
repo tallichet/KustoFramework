@@ -42,7 +42,7 @@ public static class Kql
     public static int ToInt<T>(T value) => throw new InvalidOperationException("Kql.ToInt() is a marker method.");
     public static double ToDouble<T>(T value) => throw new InvalidOperationException("Kql.ToDouble() is a marker method.");
     public static double ToReal<T>(T value) => throw new InvalidOperationException("Kql.ToReal() is a marker method.");
-    public new static string ToString<T>(T value) => throw new InvalidOperationException("Kql.ToString() is a marker method.");
+    public static string ToString<T>(T value) => throw new InvalidOperationException("Kql.ToString() is a marker method.");
     public static DateTime ToDateTime<T>(T value) => throw new InvalidOperationException("Kql.ToDateTime() is a marker method.");
     public static TimeSpan ToTimeSpan<T>(T value) => throw new InvalidOperationException("Kql.ToTimeSpan() is a marker method.");
 
