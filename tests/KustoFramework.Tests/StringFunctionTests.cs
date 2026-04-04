@@ -116,4 +116,64 @@ public class StringFunctionTests
 
         Assert.Equal("StormEvents\n| where isnotempty(Source)", kql);
     }
+
+    [Fact]
+    public void Where_KqlNotHas()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Where(e => e.Source.KqlNotHas("news"))
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| where Source !has \"news\"", kql);
+    }
+
+    [Fact]
+    public void Where_KqlNotContains()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Where(e => e.Source.KqlNotContains("test"))
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| where Source !contains \"test\"", kql);
+    }
+
+    [Fact]
+    public void Where_KqlNotStartsWith()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Where(e => e.State.KqlNotStartsWith("NEW"))
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| where State !startswith \"NEW\"", kql);
+    }
+
+    [Fact]
+    public void Where_KqlNotEndsWith()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Where(e => e.State.KqlNotEndsWith("IA"))
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| where State !endswith \"IA\"", kql);
+    }
+
+    [Fact]
+    public void Where_KqlHasAny()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Where(e => e.Source.KqlHasAny("news", "radio", "tv"))
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| where Source has_any (\"news\", \"radio\", \"tv\")", kql);
+    }
+
+    [Fact]
+    public void Where_KqlHasAll()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Where(e => e.Source.KqlHasAll("weather", "service"))
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| where Source has_all (\"weather\", \"service\")", kql);
+    }
 }

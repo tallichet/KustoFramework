@@ -5,7 +5,7 @@ using KustoFramework.Attributes;
 
 namespace KustoFramework.Query;
 
-public class KqlExpressionVisitor
+internal class KqlExpressionVisitor
 {
     public string Translate(LambdaExpression expression) =>
         Visit(expression.Body);

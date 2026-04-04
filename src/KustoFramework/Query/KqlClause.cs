@@ -3,36 +3,36 @@ using KustoFramework.Enums;
 
 namespace KustoFramework.Query;
 
-public abstract record KqlClause
+internal abstract record KqlClause
 {
     public abstract string ToKql(KqlExpressionVisitor visitor);
 }
 
-public sealed record WhereClause(LambdaExpression Predicate) : KqlClause
+internal sealed record WhereClause(LambdaExpression Predicate) : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor) =>
         $"| where {visitor.Translate(Predicate)}";
 }
 
-public sealed record ProjectClause(LambdaExpression Selector) : KqlClause
+internal sealed record ProjectClause(LambdaExpression Selector) : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor) =>
         $"| project {visitor.TranslateProjection(Selector)}";
 }
 
-public sealed record ProjectAwayClause(LambdaExpression[] Columns) : KqlClause
+internal sealed record ProjectAwayClause(LambdaExpression[] Columns) : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor) =>
         $"| project-away {string.Join(", ", Columns.Select(c => visitor.TranslateMemberAccess(c)))}";
 }
 
-public sealed record ExtendClause(LambdaExpression Extension) : KqlClause
+internal sealed record ExtendClause(LambdaExpression Extension) : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor) =>
         $"| extend {visitor.TranslateProjection(Extension)}";
 }
 
-public sealed record OrderByClause(List<(LambdaExpression KeySelector, SortOrder Order)> Keys) : KqlClause
+internal sealed record OrderByClause(List<(LambdaExpression KeySelector, SortOrder Order)> Keys) : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor)
     {
@@ -46,7 +46,7 @@ public sealed record OrderByClause(List<(LambdaExpression KeySelector, SortOrder
     }
 }
 
-public sealed record TopClause(int Count, LambdaExpression OrderBy, SortOrder Order) : KqlClause
+internal sealed record TopClause(int Count, LambdaExpression OrderBy, SortOrder Order) : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor)
     {
@@ -56,13 +56,13 @@ public sealed record TopClause(int Count, LambdaExpression OrderBy, SortOrder Or
     }
 }
 
-public sealed record TakeClause(int Count) : KqlClause
+internal sealed record TakeClause(int Count) : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor) =>
         $"| take {Count}";
 }
 
-public sealed record DistinctClause(LambdaExpression? Selector) : KqlClause
+internal sealed record DistinctClause(LambdaExpression? Selector) : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor)
     {
@@ -73,13 +73,13 @@ public sealed record DistinctClause(LambdaExpression? Selector) : KqlClause
     }
 }
 
-public sealed record CountClause : KqlClause
+internal sealed record CountClause : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor) =>
         "| count";
 }
 
-public sealed record SummarizeClause(LambdaExpression Aggregation, LambdaExpression? GroupBy) : KqlClause
+internal sealed record SummarizeClause(LambdaExpression Aggregation, LambdaExpression? GroupBy) : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor)
     {
@@ -92,7 +92,7 @@ public sealed record SummarizeClause(LambdaExpression Aggregation, LambdaExpress
     }
 }
 
-public sealed record JoinClause(string InnerKql, LambdaExpression OuterKey, LambdaExpression InnerKey, JoinKind Kind) : KqlClause
+internal sealed record JoinClause(string InnerKql, LambdaExpression OuterKey, LambdaExpression InnerKey, JoinKind Kind) : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor)
     {
@@ -121,7 +121,7 @@ public sealed record JoinClause(string InnerKql, LambdaExpression OuterKey, Lamb
     }
 }
 
-public sealed record UnionClause(string[] OtherKqls, UnionKind? Kind) : KqlClause
+internal sealed record UnionClause(string[] OtherKqls, UnionKind? Kind) : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor)
     {
@@ -130,25 +130,25 @@ public sealed record UnionClause(string[] OtherKqls, UnionKind? Kind) : KqlClaus
     }
 }
 
-public sealed record MvExpandClause(LambdaExpression ArrayColumn) : KqlClause
+internal sealed record MvExpandClause(LambdaExpression ArrayColumn) : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor) =>
         $"| mv-expand {visitor.TranslateMemberAccess(ArrayColumn)}";
 }
 
-public sealed record ParseClause(LambdaExpression Column, string Pattern) : KqlClause
+internal sealed record ParseClause(LambdaExpression Column, string Pattern) : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor) =>
         $"| parse {visitor.TranslateMemberAccess(Column)} with {Pattern}";
 }
 
-public sealed record BagUnpackClause(LambdaExpression Column) : KqlClause
+internal sealed record BagUnpackClause(LambdaExpression Column) : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor) =>
         $"| evaluate bag_unpack({visitor.TranslateMemberAccess(Column)})";
 }
 
-public sealed record RenderClause(RenderKind Kind) : KqlClause
+internal sealed record RenderClause(RenderKind Kind) : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor)
     {
@@ -172,19 +172,19 @@ public sealed record RenderClause(RenderKind Kind) : KqlClause
     }
 }
 
-public sealed record MvApplyClause(LambdaExpression ArrayColumn, string InnerKql) : KqlClause
+internal sealed record MvApplyClause(LambdaExpression ArrayColumn, string InnerKql) : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor) =>
         $"| mv-apply {visitor.TranslateMemberAccess(ArrayColumn)} on ({InnerKql})";
 }
 
-public sealed record ScanClause(string ScanBody) : KqlClause
+internal sealed record ScanClause(string ScanBody) : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor) =>
         $"| scan {ScanBody}";
 }
 
-public sealed record PartitionByClause(LambdaExpression Column, string InnerKql) : KqlClause
+internal sealed record PartitionByClause(LambdaExpression Column, string InnerKql) : KqlClause
 {
     public override string ToKql(KqlExpressionVisitor visitor) =>
         $"| partition by {visitor.TranslateMemberAccess(Column)} ({InnerKql})";

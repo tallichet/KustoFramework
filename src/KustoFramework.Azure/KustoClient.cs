@@ -37,9 +37,8 @@ public sealed class KustoClient : KustoContext, IDisposable
         var kql = query.ToKql();
         var crp = BuildRequestProperties();
 
-        using var reader = await Task.Run(
-            () => _queryProvider.ExecuteQuery(_options.Database, kql, crp),
-            cancellationToken);
+        using var reader = await _queryProvider.ExecuteQueryAsync(
+            _options.Database, kql, crp, cancellationToken).ConfigureAwait(false);
 
         return KqlResultMapper<T>.MapAll(reader);
     }
@@ -54,9 +53,8 @@ public sealed class KustoClient : KustoContext, IDisposable
         var kql = query.ToKql();
         var crp = BuildRequestProperties();
 
-        using var reader = await Task.Run(
-            () => _queryProvider.ExecuteQuery(_options.Database, kql, crp),
-            cancellationToken);
+        using var reader = await _queryProvider.ExecuteQueryAsync(
+            _options.Database, kql, crp, cancellationToken).ConfigureAwait(false);
 
         if (!reader.Read())
             return default;
@@ -76,9 +74,8 @@ public sealed class KustoClient : KustoContext, IDisposable
         var kql = query.ToKql();
         var crp = BuildRequestProperties();
 
-        return await Task.Run(
-            () => _queryProvider.ExecuteQuery(_options.Database, kql, crp),
-            cancellationToken);
+        return await _queryProvider.ExecuteQueryAsync(
+            _options.Database, kql, crp, cancellationToken).ConfigureAwait(false);
     }
 
     private ClientRequestProperties BuildRequestProperties()

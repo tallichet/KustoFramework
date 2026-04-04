@@ -155,15 +155,15 @@ public static class KqlQueryExtensions
     /// <param name="source">The source query.</param>
     /// <param name="arrayColumn">An expression selecting the array column.</param>
     /// <param name="innerPipeline">A function that builds the inner subquery pipeline.</param>
-    public static KqlQuery<TResult> MvApply<T, TResult>(
+    public static KqlQuery<T> MvApply<T, TApply>(
         this KqlQuery<T> source,
         Expression<Func<T, object>> arrayColumn,
-        Func<KqlQuery<T>, KqlQuery<TResult>> innerPipeline)
+        Func<KqlQuery<T>, KqlQuery<TApply>> innerPipeline)
     {
         var inner = new KqlQuery<T>("");
         var built = innerPipeline(inner);
-        var innerKql = built.ToKql().TrimStart('\n');
-        return source.WithClause<TResult>(new MvApplyClause(arrayColumn, innerKql));
+        var innerKql = built.ToKql();
+        return source.WithClause(new MvApplyClause(arrayColumn, innerKql));
     }
 
     /// <summary>
@@ -191,15 +191,15 @@ public static class KqlQueryExtensions
     /// <param name="source">The source query.</param>
     /// <param name="column">An expression selecting the partitioning column.</param>
     /// <param name="innerPipeline">A function that builds the inner subquery pipeline.</param>
-    public static KqlQuery<TResult> PartitionBy<T, TResult>(
+    public static KqlQuery<T> PartitionBy<T, TApply>(
         this KqlQuery<T> source,
         Expression<Func<T, object>> column,
-        Func<KqlQuery<T>, KqlQuery<TResult>> innerPipeline)
+        Func<KqlQuery<T>, KqlQuery<TApply>> innerPipeline)
     {
         var inner = new KqlQuery<T>("");
         var built = innerPipeline(inner);
-        var innerKql = built.ToKql().TrimStart('\n');
-        return source.WithClause<TResult>(new PartitionByClause(column, innerKql));
+        var innerKql = built.ToKql();
+        return source.WithClause(new PartitionByClause(column, innerKql));
     }
 
     /// <summary>Parses a string column using a pattern. KQL: <c>| parse column with pattern</c>.</summary>

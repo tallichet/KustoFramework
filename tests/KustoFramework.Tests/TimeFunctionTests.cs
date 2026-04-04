@@ -82,4 +82,92 @@ public class TimeFunctionTests
 
         Assert.Equal("StormEvents\n| summarize Total = count() by startofmonth(StartTime)", kql);
     }
+
+    [Fact]
+    public void Summarize_EndOfDay()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Summarize(
+                groupBy: e => Kql.EndOfDay(e.StartTime),
+                aggregation: e => new { Total = Kql.Count() })
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| summarize Total = count() by endofday(StartTime)", kql);
+    }
+
+    [Fact]
+    public void Summarize_EndOfMonth()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Summarize(
+                groupBy: e => Kql.EndOfMonth(e.StartTime),
+                aggregation: e => new { Total = Kql.Count() })
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| summarize Total = count() by endofmonth(StartTime)", kql);
+    }
+
+    [Fact]
+    public void Summarize_EndOfWeek()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Summarize(
+                groupBy: e => Kql.EndOfWeek(e.StartTime),
+                aggregation: e => new { Total = Kql.Count() })
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| summarize Total = count() by endofweek(StartTime)", kql);
+    }
+
+    [Fact]
+    public void Summarize_EndOfYear()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Summarize(
+                groupBy: e => Kql.EndOfYear(e.StartTime),
+                aggregation: e => new { Total = Kql.Count() })
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| summarize Total = count() by endofyear(StartTime)", kql);
+    }
+
+    [Fact]
+    public void Extend_DatetimeDiff()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Extend(e => new { DaysAgo = Kql.DatetimeDiff("day", Kql.Now(), e.StartTime) })
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| extend DaysAgo = datetime_diff(\"day\", now(), StartTime)", kql);
+    }
+
+    [Fact]
+    public void Extend_DatetimeAdd()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Extend(e => new { NextDay = Kql.DatetimeAdd("day", 1, e.StartTime) })
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| extend NextDay = datetime_add(\"day\", 1, StartTime)", kql);
+    }
+
+    [Fact]
+    public void Extend_DayOfWeek()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Extend(e => new { Dow = Kql.DayOfWeek(e.StartTime) })
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| extend Dow = dayofweek(StartTime)", kql);
+    }
+
+    [Fact]
+    public void Extend_FormatDatetime()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Extend(e => new { DateStr = Kql.FormatDatetime(e.StartTime, "yyyy-MM-dd") })
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| extend DateStr = format_datetime(StartTime, \"yyyy-MM-dd\")", kql);
+    }
 }
