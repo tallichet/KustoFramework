@@ -23,13 +23,29 @@ for (int i = 1; i < args.Length; i++)
     switch (args[i])
     {
         case "--last" when i + 1 < args.Length:
-            lookback = ParseDuration(args[++i]);
+            if (!TryParseDuration(args[++i], out lookback))
+            {
+                Console.Error.WriteLine($"Error: Invalid duration '{args[i]}'. Examples: 30m, 1h, 7d");
+                PrintUsage();
+                return 1;
+            }
             break;
         case "--top" when i + 1 < args.Length:
-            top = int.Parse(args[++i]);
+            if (!int.TryParse(args[++i], out top) || top <= 0)
+            {
+                Console.Error.WriteLine($"Error: --top must be a positive integer.");
+                PrintUsage();
+                return 1;
+            }
             break;
         case "--severity" when i + 1 < args.Length:
-            minSeverity = int.Parse(args[++i]);
+            if (!int.TryParse(args[++i], out var sev) || sev < 0 || sev > 4)
+            {
+                Console.Error.WriteLine($"Error: --severity must be an integer between 0 and 4.");
+                PrintUsage();
+                return 1;
+            }
+            minSeverity = sev;
             break;
         case "--dry-run":
             dryRun = true;
@@ -220,25 +236,26 @@ static void PrintTable(string[] headers, IEnumerable<string[]> rows)
     Console.WriteLine($"\n{allRows.Count} row(s)");
 }
 
-static TimeSpan ParseDuration(string input)
+static bool TryParseDuration(string input, out TimeSpan result)
 {
+    result = TimeSpan.FromHours(1);
     if (string.IsNullOrWhiteSpace(input))
-        return TimeSpan.FromHours(1);
+        return false;
 
     var span = input.AsSpan().Trim();
     var suffix = span[^1];
-    if (double.TryParse(span[..^1], out var value))
+    if (double.TryParse(span[..^1], System.Globalization.NumberStyles.Float,
+            System.Globalization.CultureInfo.InvariantCulture, out var value) && value > 0)
     {
-        return suffix switch
+        switch (suffix)
         {
-            'm' => TimeSpan.FromMinutes(value),
-            'h' => TimeSpan.FromHours(value),
-            'd' => TimeSpan.FromDays(value),
-            _ => throw new ArgumentException($"Unknown duration suffix '{suffix}'. Use m, h, or d.")
-        };
+            case 'm': result = TimeSpan.FromMinutes(value); return true;
+            case 'h': result = TimeSpan.FromHours(value);   return true;
+            case 'd': result = TimeSpan.FromDays(value);    return true;
+        }
     }
 
-    throw new ArgumentException($"Invalid duration: {input}. Examples: 30m, 1h, 7d");
+    return false;
 }
 
 static string Truncate(string value, int maxLength) =>

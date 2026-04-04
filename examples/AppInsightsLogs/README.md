@@ -20,18 +20,17 @@ This example demonstrates:
 Set the following environment variables:
 
 ```bash
-export APP_INSIGHTS_CLUSTER_URI="https://ade.loganalytics.io/subscriptions/<sub-id>/resourcegroups/<rg>/providers/microsoft.operationalinsights/workspaces/<workspace-name>"
-export APP_INSIGHTS_DATABASE="<workspace-name>"
+export APP_INSIGHTS_CLUSTER_URI="https://ade.loganalytics.io"
+export APP_INSIGHTS_DATABASE="/subscriptions/<sub-id>/resourcegroups/<rg>/providers/microsoft.operationalinsights/workspaces/<workspace-name>"
 ```
 
 Or edit `appsettings.json` with the same values.
 
-### Finding your cluster URI
+### Finding your workspace resource path
 
 1. Go to the [Azure portal](https://portal.azure.com) → your **Log Analytics workspace**
 2. In the **Overview** blade, note the **Subscription ID**, **Resource group**, and **Workspace name**
-3. Build the URI: `https://ade.loganalytics.io/subscriptions/{sub}/resourcegroups/{rg}/providers/microsoft.operationalinsights/workspaces/{name}`
-4. The **Database** is the workspace name
+3. The database value is: `/subscriptions/{sub}/resourcegroups/{rg}/providers/microsoft.operationalinsights/workspaces/{name}`
 
 ## Usage
 
