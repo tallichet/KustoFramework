@@ -7,4 +7,7 @@
     <Project Path="tests/KustoFramework.Tests/KustoFramework.Tests.csproj" />
     <Project Path="tests/KustoFramework.Azure.Tests/KustoFramework.Azure.Tests.csproj" />
   </Folder>
+  <Folder Name="/examples/">
+    <Project Path="examples/AppInsightsLogs/AppInsightsLogs.csproj" />
+  </Folder>
 </Solution>
