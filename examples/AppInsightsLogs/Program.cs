@@ -23,25 +23,28 @@ for (int i = 1; i < args.Length; i++)
     switch (args[i])
     {
         case "--last" when i + 1 < args.Length:
-            if (!TryParseDuration(args[++i], out lookback))
+            var durationArg = args[++i];
+            if (!TryParseDuration(durationArg, out lookback))
             {
-                Console.Error.WriteLine($"Error: Invalid duration '{args[i]}'. Examples: 30m, 1h, 7d");
+                Console.Error.WriteLine($"Error: Invalid duration '{durationArg}'. Examples: 30m, 1h, 7d");
                 PrintUsage();
                 return 1;
             }
             break;
         case "--top" when i + 1 < args.Length:
-            if (!int.TryParse(args[++i], out top) || top <= 0)
+            var topArg = args[++i];
+            if (!int.TryParse(topArg, out top) || top <= 0)
             {
-                Console.Error.WriteLine($"Error: --top must be a positive integer.");
+                Console.Error.WriteLine($"Error: --top must be a positive integer, got '{topArg}'.");
                 PrintUsage();
                 return 1;
             }
             break;
         case "--severity" when i + 1 < args.Length:
-            if (!int.TryParse(args[++i], out var sev) || sev < 0 || sev > 4)
+            var sevArg = args[++i];
+            if (!int.TryParse(sevArg, out var sev) || sev < 0 || sev > 4)
             {
-                Console.Error.WriteLine($"Error: --severity must be an integer between 0 and 4.");
+                Console.Error.WriteLine($"Error: --severity must be an integer between 0 and 4, got '{sevArg}'.");
                 PrintUsage();
                 return 1;
             }
