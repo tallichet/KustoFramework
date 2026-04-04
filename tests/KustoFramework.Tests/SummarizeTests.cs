@@ -116,4 +116,80 @@ public class SummarizeTests
 
         Assert.Equal("StormEvents\n| summarize UniqueEvents = make_set(EventType) by State", kql);
     }
+
+    [Fact]
+    public void Summarize_TakeAny()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Summarize(
+                groupBy: e => e.State,
+                aggregation: e => new { AnyEvent = Kql.TakeAny(e.EventType) })
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| summarize AnyEvent = take_any(EventType) by State", kql);
+    }
+
+    [Fact]
+    public void Summarize_Stdev()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Summarize(e => new { StdDev = Kql.Stdev(e.DamageProperty) })
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| summarize StdDev = stdev(DamageProperty)", kql);
+    }
+
+    [Fact]
+    public void Summarize_Variance()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Summarize(e => new { Var = Kql.Variance(e.DamageProperty) })
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| summarize Var = variance(DamageProperty)", kql);
+    }
+
+    [Fact]
+    public void Summarize_Percentiles()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Summarize(e => new { Pcts = Kql.Percentiles(e.DamageProperty, 50, 90, 99) })
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| summarize Pcts = percentiles(DamageProperty, 50, 90, 99)", kql);
+    }
+
+    [Fact]
+    public void Summarize_MakeBag()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Summarize(e => new { Bag = Kql.MakeBag(e.DynamicBag) })
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| summarize Bag = make_bag(DynamicBag)", kql);
+    }
+
+    [Fact]
+    public void Summarize_MakeListWithMaxSize()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Summarize(
+                groupBy: e => e.State,
+                aggregation: e => new { Top10 = Kql.MakeList(e.EventType, 10) })
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| summarize Top10 = make_list(EventType, 10) by State", kql);
+    }
+
+    [Fact]
+    public void Summarize_MakeSetWithMaxSize()
+    {
+        var kql = _ctx.Table<StormEvent>()
+            .Summarize(
+                groupBy: e => e.State,
+                aggregation: e => new { Top5 = Kql.MakeSet(e.EventType, 5) })
+            .ToKql();
+
+        Assert.Equal("StormEvents\n| summarize Top5 = make_set(EventType, 5) by State", kql);
+    }
 }

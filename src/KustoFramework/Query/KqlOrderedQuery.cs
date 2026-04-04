@@ -3,6 +3,10 @@ using KustoFramework.Enums;
 
 namespace KustoFramework.Query;
 
+/// <summary>
+/// Represents an ordered KQL query, enabling secondary sort keys via <c>ThenBy</c> / <c>ThenByDescending</c>.
+/// </summary>
+/// <typeparam name="T">The model type representing the current output schema.</typeparam>
 public class KqlOrderedQuery<T> : KqlQuery<T>
 {
     internal KqlOrderedQuery(string tableName, ImmutableList<KqlClause> clauses)

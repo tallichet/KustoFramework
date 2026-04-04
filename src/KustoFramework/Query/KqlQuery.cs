@@ -5,11 +5,18 @@ using KustoFramework.Attributes;
 
 namespace KustoFramework.Query;
 
+/// <summary>
+/// An immutable KQL query pipeline. Each operator method returns a new instance with the clause appended.
+/// Call <see cref="ToKql"/> to render the final KQL string.
+/// </summary>
+/// <typeparam name="T">The model type representing the current output schema.</typeparam>
 public class KqlQuery<T>
 {
     private readonly string _tableName;
     private readonly ImmutableList<KqlClause> _clauses;
 
+    /// <summary>Creates a new query for the specified table.</summary>
+    /// <param name="tableName">The KQL table name.</param>
     public KqlQuery(string tableName) : this(tableName, ImmutableList<KqlClause>.Empty) { }
 
     internal KqlQuery(string tableName, ImmutableList<KqlClause> clauses)
@@ -31,6 +38,8 @@ public class KqlQuery<T>
 
     internal ImmutableList<KqlClause> GetClauses() => _clauses;
 
+    /// <summary>Renders the complete KQL query string, including the table name and all appended operators.</summary>
+    /// <returns>The KQL query as a string.</returns>
     public string ToKql()
     {
         var visitor = new KqlExpressionVisitor();
@@ -46,6 +55,7 @@ public class KqlQuery<T>
         return sb.ToString();
     }
 
+    /// <summary>Returns the KQL string representation of this query (same as <see cref="ToKql"/>).</summary>
     public override string ToString() => ToKql();
 
     internal static string ResolveTableName()
