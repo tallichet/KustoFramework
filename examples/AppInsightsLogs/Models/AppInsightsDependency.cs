@@ -1,0 +1,34 @@
+using KustoFramework.Attributes;
+
+namespace AppInsightsLogs.Models;
+
+[KqlTable("dependencies")]
+public class AppInsightsDependency
+{
+    [KqlColumn("timestamp")]
+    public DateTime Timestamp { get; set; }
+
+    [KqlColumn("name")]
+    public string Name { get; set; } = "";
+
+    [KqlColumn("type")]
+    public string Type { get; set; } = "";
+
+    [KqlColumn("target")]
+    public string Target { get; set; } = "";
+
+    [KqlColumn("duration")]
+    public TimeSpan Duration { get; set; }
+
+    [KqlColumn("success")]
+    public bool Success { get; set; }
+
+    [KqlColumn("resultCode")]
+    public string ResultCode { get; set; } = "";
+
+    [KqlColumn("operation_Id")]
+    public string OperationId { get; set; } = "";
+
+    [KqlColumn("cloud_RoleName")]
+    public string CloudRoleName { get; set; } = "";
+}

@@ -98,6 +98,10 @@ string topDamage = baseQuery.Top(5, e => e.DamageProperty).ToKql();
 - [Operators Reference](docs/operators-reference.md)
 - [Advanced Usage](docs/advanced-usage.md)
 
+## Examples
+
+- [App Insights Log Viewer](examples/AppInsightsLogs/) — A minimal CLI that queries Application Insights data from a Log Analytics workspace, demonstrating model definition, typed query building, and query execution with `KustoFramework.Azure`.
+
 ## Contributing
 
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
