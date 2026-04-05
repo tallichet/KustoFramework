@@ -15,6 +15,11 @@ public sealed class KustoClient : KustoContext, IDisposable
     private readonly ICslQueryProvider _queryProvider;
     private bool _disposed;
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="KustoClient"/> with the specified connection options.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <exception cref="ArgumentNullException"></exception>
     public KustoClient(KustoConnectionOptions options)
     {
         _options = options ?? throw new ArgumentNullException(nameof(options));
@@ -91,6 +96,9 @@ public sealed class KustoClient : KustoContext, IDisposable
         return crp;
     }
 
+    /// <summary>
+    /// Disposes the client and its underlying resources. After disposal, the client should not be used for executing queries.
+    /// </summary>
     public void Dispose()
     {
         if (_disposed)
